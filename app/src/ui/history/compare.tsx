@@ -567,6 +567,7 @@ export class CompareSidebar extends React.Component<
   }
 
   private onSearchFilterTextChanged = (searchCommitText: string) => {
+    this.props.dispatcher.loadNextCommitBatch(this.props.repository)
     this.props.dispatcher.updateCompareForm(this.props.repository, {
       searchCommitText
     })

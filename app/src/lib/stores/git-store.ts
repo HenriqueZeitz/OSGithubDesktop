@@ -103,12 +103,12 @@ import { stat } from 'fs/promises'
 import { findForkedRemotesToPrune } from './helpers/find-forked-remotes-to-prune'
 
 /** The number of commits to load from history per batch. */
-const CommitBatchSize = 100
+const CommitBatchSize = 999999999
 
 const LoadingHistoryRequestKey = 'history'
 
 /** The max number of recent branches to find. */
-const RecentBranchesLimit = 5
+const RecentBranchesLimit = 8
 
 /** The store for a repository's git data. */
 export class GitStore extends BaseStore {
