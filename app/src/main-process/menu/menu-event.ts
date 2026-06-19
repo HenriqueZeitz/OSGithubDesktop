@@ -8,6 +8,8 @@ export type MenuEvent =
   | 'add-local-repository'
   | 'create-branch'
   | 'show-branches'
+  | 'show-worktrees'
+  | 'create-worktree'
   | 'remove-repository'
   | 'create-repository'
   | 'rename-branch'
@@ -35,6 +37,7 @@ export type MenuEvent =
   | 'install-windows-cli'
   | 'uninstall-windows-cli'
   | 'open-external-editor'
+  | 'open-with-external-editor'
   | 'select-all'
   | 'show-stashed-changes'
   | 'hide-stashed-changes'
@@ -44,6 +47,7 @@ export type MenuEvent =
   | 'test-app-error'
   | 'decrease-active-resizable-width'
   | 'increase-active-resizable-width'
+  | 'toggle-changes-filter'
   | TestMenuEvent
 
 /**

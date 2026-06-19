@@ -1,3 +1,6 @@
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert'
+import { join } from 'path'
 import { RepositoriesStore } from '../../src/lib/stores/repositories-store'
 import { TestRepositoriesDatabase } from '../helpers/databases'
 import { IAPIFullRepository, getDotComAPIEndpoint } from '../../src/lib/api'
@@ -16,20 +19,26 @@ describe('RepositoriesStore', () => {
   describe('adding a new repository', () => {
     it('contains the added repository', async () => {
       const repoPath = '/some/cool/path'
-      await repositoriesStore.addRepository(repoPath)
+      await repositoriesStore.addRepository(repoPath, join(repoPath, '.git'))
 
       const repositories = await repositoriesStore.getAll()
-      expect(repositories[0].path).toBe(repoPath)
+      assert.equal(repositories[0].path, repoPath)
     })
   })
 
   describe('getting all repositories', () => {
     it('returns multiple repositories', async () => {
-      await repositoriesStore.addRepository('/some/cool/path')
-      await repositoriesStore.addRepository('/some/other/path')
+      await repositoriesStore.addRepository(
+        '/some/cool/path',
+        '/some/cool/path/.git'
+      )
+      await repositoriesStore.addRepository(
+        '/some/other/path',
+        '/some/other/path/.git'
+      )
 
       const repositories = await repositoriesStore.getAll()
-      expect(repositories).toHaveLength(2)
+      assert.equal(repositories.length, 2)
     })
   })
 
@@ -63,32 +72,43 @@ describe('RepositoriesStore', () => {
 
     it('adds a new GitHub repository', async () => {
       await repositoriesStore.setGitHubRepository(
-        await repositoriesStore.addRepository('/some/cool/path'),
+        await repositoriesStore.addRepository(
+          '/some/cool/path',
+          '/some/cool/path/.git'
+        ),
         await repositoriesStore.upsertGitHubRepository(endpoint, apiRepo)
       )
 
       const repositories = await repositoriesStore.getAll()
       const repo = repositories[0]
       assertIsRepositoryWithGitHubRepository(repo)
-      expect(repo.gitHubRepository.isPrivate).toBe(true)
-      expect(repo.gitHubRepository.fork).toBe(false)
-      expect(repo.gitHubRepository.htmlURL).toBe(
+      assert(repo.gitHubRepository.isPrivate)
+      assert(!repo.gitHubRepository.fork)
+      assert.equal(
+        repo.gitHubRepository.htmlURL,
         'https://github.com/my-user/my-repo'
       )
     })
 
     it('reuses an existing GitHub repository', async () => {
       const firstRepo = await repositoriesStore.setGitHubRepository(
-        await repositoriesStore.addRepository('/some/cool/path'),
+        await repositoriesStore.addRepository(
+          '/some/cool/path',
+          '/some/cool/path/.git'
+        ),
         await repositoriesStore.upsertGitHubRepository(endpoint, apiRepo)
       )
 
       const secondRepo = await repositoriesStore.setGitHubRepository(
-        await repositoriesStore.addRepository('/some/other/path'),
+        await repositoriesStore.addRepository(
+          '/some/other/path',
+          '/some/other/path/.git'
+        ),
         await repositoriesStore.upsertGitHubRepository(endpoint, apiRepo)
       )
 
-      expect(firstRepo.gitHubRepository.dbID).toBe(
+      assert.equal(
+        firstRepo.gitHubRepository.dbID,
         secondRepo.gitHubRepository.dbID
       )
     })

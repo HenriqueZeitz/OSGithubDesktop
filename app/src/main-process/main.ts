@@ -103,7 +103,7 @@ function getExtraErrorContext(): Record<string, string> {
 const protocolLauncherArg = '--protocol-launcher'
 
 const possibleProtocols = new Set(['x-github-client'])
-if (__DEV__) {
+if (__DEV_SECRETS__) {
   possibleProtocols.add('x-github-desktop-dev-auth')
 } else {
   possibleProtocols.add('x-github-desktop-auth')
@@ -610,6 +610,11 @@ app.on('ready', () => {
    * An event sent by the renderer asking for the app's path
    */
   ipcMain.handle('get-app-path', async () => app.getAppPath())
+
+  /**
+   * An event sent by the renderer asking for the executable path
+   */
+  ipcMain.handle('get-exec-path', async () => process.execPath)
 
   /**
    * An event sent by the renderer asking for whether the app is running under
